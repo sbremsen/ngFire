@@ -8,6 +8,10 @@
   margin-top: 10px;
 }
 
-.image {
-  width: 100%
+.error{
+  color: red;
+}
+
+.success{
+  color: green;
 }

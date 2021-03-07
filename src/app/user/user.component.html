@@ -1,0 +1,26 @@
+
+<div class="container-flex">
+<h1 class="header">Update Content for this Page</h1>
+
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown button
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-md-offset-4">
+
+      <app-tinymce  (htmlContentEdited)="updateValue($event)"></app-tinymce>
+      <span><b>Value emitted from child component is:</b></span>
+    {{ htmlEditorContent }}
+  </div>
+
+</div>
+
+</div>
