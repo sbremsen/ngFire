@@ -3,75 +3,112 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import { TinyMCEContentModel } from '../core/content.model';
-import { flatMap, switchMap } from 'rxjs/operators';
+import { flatMap, map, switchMap, tap } from 'rxjs/operators';
 import { Observable } from 'tinymce';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 @Injectable()
 export class ContentService {
-    contentToInsert: string = '';
-    items: Observable<any>;
-    msgVal$ = new Subject<string>();
+  contentToInsert: string = '';
+  items: Observable<any>;
+  msgVal$ = new Subject<string>();
+  id: string;
+  constructor(public db: AngularFirestore, public afAuth: AngularFireAuth) {}
 
-    constructor(public db: AngularFirestore, public afAuth: AngularFireAuth, private firestore: AngularFirestore) {
+  getContentByUserId(userId: string, pageTitle: string): any {
+    pageTitle = pageTitle !== '' ? pageTitle : 'Home';
+    const collection = this.db.collection<TinyMCEContentModel>(
+      'content',
+      (ref) => ref.where('uid', '==', userId).where('pageTitle', '==', pageTitle)
+    );
+    const pages$ = collection.valueChanges().pipe(
+      map((pages) => {
+        const page = pages[0];
+        return page;
+      })
+    );
 
-    }
+    return pages$;
+  }
 
-    // queryObservable = this.msgVal$.pipe(
-    //   switchMap(size =>
-    //     this.firestore.collection('content', ref => ref.where('uid', '==', userId)).valueChanges()
-    //   )
-    // );
+  getPagesByUserId(userId: string) {
+     return this.db.collection(
+      'content',
+      (ref) => ref.where('uid', '==', userId)
+        .orderBy('pageTitle')
+    )
+    .get()
+    .pipe(
+      map(
+        (result) => {
+           return this.convertSnaps<TinyMCEContentModel>(result);
+        })
+    )
+  }
 
+  convertSnaps<T>(results) {
+    return <T[]> results.docs.map(snap => {
+         return {
+             id: snap.id,
+             ...snap.data()
+         }
+     });
+}
 
-    getContentForUserPage(userId: string){
+  saveContent(content: TinyMCEContentModel) {
+    return this.db.collection('content').add(content);
+  }
 
-      return this.afAuth.authState.pipe(
-        switchMap(user => {
-          if (user) {
-            return this.db
-              .collection<TinyMCEContentModel>('content', ref =>
-                ref.where('uid', '==', user.uid).orderBy('pageSection')
-              )
-              .valueChanges({ idField: 'id' });
-          } else {
-            return [];
-          }
-        }),
-        // map(boards => boards.sort((a, b) => a.priority - b.priority))
-      );
+  updateContent(content: TinyMCEContentModel, userId: string) {
+    debugger;
+    const docToUpdate = this.db.collection<TinyMCEContentModel>(
+      'content',
+      (ref) => ref.where('uid', '==', userId).where('pageTitle', '==', content.pageTitle)
+    ).get()
+    .pipe(
+        tap(result => {
+          debugger;
+          console.log(result);
+          const updatedDoc = this.convertSnaps<TinyMCEContentModel>(result);
+          const updatedDocId = result.docs[0].id;
+          this.db.doc('/content/' + updatedDocId).update(content);
+        })
+    )
+    .subscribe();
 
-    }
+    // this.db
+    //   .doc("/content/")
+    //   //.doc("/content/3Eobv0FnBXd2ZzfbpLs9")
+    //   .snapshotChanges()
+    //   .subscribe((snap) => {
+    //     debugger;
+    //     const docId = snap.payload.id;
 
-
-
-    saveContent(content: TinyMCEContentModel){
-      let id = this.db.createId();
-      return this.db.collection('content').add(content);
-    }
-
-    updateContent(content: TinyMCEContentModel){
-      debugger;
-     // delete content.id;
-      this.db.doc('content/' + content.id).update(content);
+    //     this.db.doc("/content/" + docId).update(content);
+      // });
   }
 
   createContent(data) {
-    return new Promise<any>((resolve, reject) =>{
-        this.firestore
-            .collection("content")
-            .add(data)
-            .then(res => {}, err => reject(err));
+    return new Promise<any>((resolve, reject) => {
+      this.db
+        .collection('content')
+        .add(data)
+        .then(
+          (res) => {},
+          (err) => reject(err)
+        );
     });
   }
 
   createCoffeeOrder(data) {
-    return new Promise<any>((resolve, reject) =>{
-        this.firestore
-            .collection("coffeeOrders")
-            .add(data)
-            .then(res => {}, err => reject(err));
+    return new Promise<any>((resolve, reject) => {
+      this.db
+        .collection('coffeeOrders')
+        .add(data)
+        .then(
+          (res) => {},
+          (err) => reject(err)
+        );
     });
   }
-
 }

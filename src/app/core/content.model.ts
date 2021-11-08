@@ -5,6 +5,7 @@ export class TinyMCEContentModel {
   description?: string;
   content?: string;
   uid?: string;
+  imageUrl?: string;
 
   constructor() {
 

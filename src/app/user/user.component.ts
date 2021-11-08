@@ -24,18 +24,18 @@ export class UserComponent implements OnInit{
     private location : Location,
     private fb: FormBuilder
   ) {
-   // alert("here");
+
   }
 
   ngOnInit(): void {
     console.log('init from user component')
     this.route.data.subscribe(routeData => {
-      let data = routeData['data'];
+      const data = routeData.data;
       if (data) {
         this.user = data;
         this.createForm(this.user.name);
       }
-    })
+    });
   }
 
   createForm(name) {
@@ -45,7 +45,6 @@ export class UserComponent implements OnInit{
   }
 
   updateValue(valueEmitted){
-    debugger;
     this.htmlEditorContent = valueEmitted;
     console.log(valueEmitted);
   }

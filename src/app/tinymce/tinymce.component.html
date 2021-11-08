@@ -1,11 +1,63 @@
-<h3>Tiny MCE editor</h3>
-<button class="btn btn-primary" id="btnSave" (click)="handleSaveClick($event)">Save</button>
+<div class='mce-container'>
 
-<textarea id="mymce1"></textarea>
-<button class="btn btn-primary" id="btnSave" (click)="setContent($event)">Set Content</button>
+  <div *ngIf="pages && pages.length > 0" class='edit-container'>
+    <span class='col-md-6'>
+      <p>You have Pages Loaded! Click button for the page that you want to update.</p>
+
+      <span class="row page-container">
+          <button *ngFor="let page of pages" class="btn btn-info btn-pageEdit"  (click)="selectPage(page.pageTitle)">{{ page.pageTitle}}</button>
+          <!-- <mat-card *ngFor="let page of pages" class="user-pages page-card">
+            <mat-card-title class='mat-card-title'>{{ page.pageTitle }}</mat-card-title>
+            <!-- <img mat-card-image [src]="page.imageUrl" > -->
+            <!-- <mat-card-content>
+              <p>
+                {{ page.description }}
+              </p>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button class="btn btn-primary" (click)="selectPage(page.pageTitle)">EDIT</button>
+            </mat-card-actions>
+          </mat-card>  -->
+
+      </span>
+    </span>
+    <span class="col-md-6">
+      <button
+      class="btn btn-primary"
+      id="btnSave"
+      (click)="handleSaveClick($event)"
+    >
+      Save
+    </button>
+    <button
+      class="btn btn-primary"
+      id="btnSave"
+      (click)="handleUpdateClick($event)"
+      style="margin-left: 25px"
+    >
+      Update
+    </button>
+  </span>
+
+</div>
 
 
+  <div class="row">
+    <div class='col-md-3'>
+      <h3>Preview {{ selectedPageTitle }}:</h3>
+    </div>
+    <div class='col-md-8'>
+      <h4>Click inside the preview page to view the editor tools.  Select a template to quickly customize your page.</h4>
+    </div>
 
+  </div>
 
+  <div class="row">
+    <div id="mymce1"></div>
+  </div>
 
+  <div class="row">
 
+  </div>
+</div>

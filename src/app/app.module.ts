@@ -17,18 +17,21 @@ import { UserResolver } from './user/user.resolver';
 import { AuthGuard } from './core/auth.guard';
 import { AuthService } from './core/auth.service';
 import { UserService } from './core/user.service';
-import { EditorModule } from '@tinymce/tinymce-angular';
 import { TinymceComponent } from './tinymce/tinymce.component';
 import { PreviewComponent } from './preview/preview.component';
 import { HeaderComponent } from './header/header.component';
 import { ContentService } from './core/content.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule } from '@angular/material/input';
+
 import { OrdersComponent } from './orders/orders.component';
 import { OrderListComponent } from './order-list/order-list.component';
 import { OrdersService } from './shared/orders.service';
 import { ProfileComponent } from './profile/profile.component';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +45,7 @@ import { ProfileComponent } from './profile/profile.component';
     OrdersComponent,
     OrderListComponent,
     ProfileComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,10 +54,11 @@ import { ProfileComponent } from './profile/profile.component';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule, // imports firebase/firestore, only needed for database features
     AngularFireAuthModule, // imports firebase/auth, only needed for auth features
-    EditorModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatInputModule
+    MatInputModule,
+    MatCardModule,
+    MatButtonModule
   ],
   providers: [AuthService, UserService, UserResolver, AuthGuard, ContentService, OrdersService],
   bootstrap: [AppComponent]
